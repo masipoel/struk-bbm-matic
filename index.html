@@ -284,12 +284,16 @@
             let min = String(randomMinute).padStart(2, '0');
             document.getElementById('i-jam').value = `${hh}:${min}`;
 
+            // Acak Pump No (1 hingga 11)
+            let randomPump = Math.floor(Math.random() * 11) + 1;
+            document.getElementById('i-pump').value = randomPump;
+
             updateStruk();
         }
 
         window.onload = function() {
             changeSPBU(); 
-            generateReceipt(); // Memanggil fungsi acak tanggal, waktu, & receipt saat halaman dimuat
+            generateReceipt(); // Memanggil fungsi acak tanggal, waktu, pump & receipt saat halaman dimuat
             calculateVolume();
         };
 
