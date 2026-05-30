@@ -168,11 +168,11 @@
         </div>
         <div class="form-group">
             <label>Amount (Total Harga)</label>
-            <input type="number" id="i-amount" value="300000" oninput="calculateVolume()">
+            <input type="number" id="i-amount" value="200000" oninput="calculateVolume()">
         </div>
         <div class="form-group">
             <label>Volume (Liter) - Otomatis</label>
-            <input type="text" id="i-volume" value="21.73" readonly>
+            <input type="text" id="i-volume" value="14.49" readonly>
         </div>
         <div class="form-group">
             <label>Vehicle No. (Plat Nomor)</label>
@@ -216,7 +216,7 @@
             </div>
             <div class="row">
                 <span>Volume</span>
-                <span id="r-volume">21.73</span>
+                <span id="r-volume">14.49</span>
             </div>
             <div class="row">
                 <span>Unit Price</span>
@@ -225,7 +225,7 @@
             
             <div class="row amount-row">
                 <strong>Amount</strong>
-                <strong id="r-amount">300000</strong>
+                <strong id="r-amount">200000</strong>
             </div>
             
             <br> <div class="row">
@@ -317,8 +317,9 @@
             let randomPump = Math.floor(Math.random() * 11) + 1;
             document.getElementById('i-pump').value = randomPump;
             
-            // Acak Amount (300.000 hingga 1.100.000, kelipatan 1000)
-            let randomAmount = Math.floor(Math.random() * 801) * 1000 + 300000;
+            // Acak Amount (200.000 hingga 500.000, kelipatan 10 rupiah)
+            // Rumus ini memungkinkan angka seperti 210.720 atau 499.990
+            let randomAmount = Math.floor(Math.random() * 30001) * 10 + 200000;
             document.getElementById('i-amount').value = randomAmount;
 
             // Set harga dan update struk
