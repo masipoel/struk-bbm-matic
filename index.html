@@ -228,7 +228,7 @@
                 <strong id="r-amount">300000</strong>
             </div>
             
-            <div class="row">
+            <br> <div class="row">
                 <span>Vehicle No.</span>
                 <span id="r-vehicle">Not Entered</span>
             </div>
@@ -250,6 +250,7 @@
         // === FUNGSI LOGIKA FORM ===
         function changeSPBU() {
             let namaSPBU = document.getElementById('i-nama').value;
+            // Set textarea alamat berdasarkan dropdown pilihan
             document.getElementById('i-alamat').value = dataSPBU[namaSPBU] || "";
             updateStruk();
         }
@@ -267,8 +268,8 @@
             document.getElementById('i-receipt').value = '0' + randomNum;
 
             // 2. Acak Tanggal (Dari 1 Januari tahun ini hingga hari ini)
-            let end = new Date(); 
-            let start = new Date(end.getFullYear(), 0, 1); 
+            let end = new Date(); // Hari ini
+            let start = new Date(end.getFullYear(), 0, 1); // 1 Januari tahun berjalan
             let randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
             
             let d = String(randomDate.getDate()).padStart(2, '0');
@@ -277,16 +278,16 @@
             document.getElementById('i-tgl').value = `${y}-${m}-${d}`;
 
             // 3. Acak Jam Kerja (08:00 hingga 20:59) - Tetap 24 Jam
-            let h = Math.floor(Math.random() * 13) + 8; 
-            let min = Math.floor(Math.random() * 60); 
+            let h = Math.floor(Math.random() * 13) + 8; // Rentang 8 hingga 20
+            let min = Math.floor(Math.random() * 60); // Rentang 0 hingga 59
             document.getElementById('i-jam').value = `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
 
             updateStruk();
         }
 
         window.onload = function() {
-            changeSPBU();
-            generateReceipt(); 
+            changeSPBU(); // Set otomatis nama & alamat SPBU awal saat halaman dimuat
+            generateReceipt(); // Eksekusi acak data (Nomor, Tanggal, Jam)
             calculateVolume();
         };
 
@@ -323,7 +324,7 @@
             document.getElementById('r-footer').innerText = document.getElementById('i-footer').value;
         }
 
-        // === FUNGSI BLUETOOTH THERMAL PRINTER ===
+        // === FUNGSI BLUETOOTH THERMAL PRINTER (Dengan Chunking) ===
         let printCharacteristic = null;
 
         async function connectBluetooth() {
@@ -380,6 +381,7 @@
                 return;
             }
 
+            // ESC/POS Commands Thermal
             const ESC_NORMAL = "\x1B\x21\x00"; 
             const BOLD_ON = "\x1B\x45\x01";    
             const BOLD_OFF = "\x1B\x45\x00";   
@@ -401,8 +403,7 @@
             receiptText += formatLine("Unit Price", document.getElementById('i-price').value) + "\n";
             
             let strAmount = formatLine("Amount", document.getElementById('i-amount').value);
-            // DARI SINI: \n\n diubah menjadi \n agar tidak ada spasi kosong ke baris Vehicle No.
-            receiptText += BOLD_ON + strAmount + BOLD_OFF + "\n";
+            receiptText += BOLD_ON + strAmount + BOLD_OFF + "\n\n";
             
             receiptText += formatLine("Vehicle No.", document.getElementById('i-vehicle').value) + "\n\n";
             
@@ -414,7 +415,8 @@
                 const encoder = new TextEncoder();
                 const data = encoder.encode(receiptText);
                 
-                const CHUNK_SIZE = 50; 
+                // --- PROSES CHUNKING (MEMECAH DATA) ---
+                const CHUNK_SIZE = 50; // Ukuran aman per pengiriman untuk printer BLE
                 
                 for (let i = 0; i < data.byteLength; i += CHUNK_SIZE) {
                     let chunk = data.slice(i, i + CHUNK_SIZE);
