@@ -228,7 +228,7 @@
                 <strong id="r-amount">300000</strong>
             </div>
             
-            <br> <div class="row">
+            <div class="row">
                 <span>Vehicle No.</span>
                 <span id="r-vehicle">Not Entered</span>
             </div>
@@ -250,7 +250,6 @@
         // === FUNGSI LOGIKA FORM ===
         function changeSPBU() {
             let namaSPBU = document.getElementById('i-nama').value;
-            // Set textarea alamat berdasarkan dropdown pilihan
             document.getElementById('i-alamat').value = dataSPBU[namaSPBU] || "";
             updateStruk();
         }
@@ -268,8 +267,8 @@
             document.getElementById('i-receipt').value = '0' + randomNum;
 
             // 2. Acak Tanggal (Dari 1 Januari tahun ini hingga hari ini)
-            let end = new Date(); // Hari ini
-            let start = new Date(end.getFullYear(), 0, 1); // 1 Januari tahun berjalan
+            let end = new Date(); 
+            let start = new Date(end.getFullYear(), 0, 1); 
             let randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
             
             let d = String(randomDate.getDate()).padStart(2, '0');
@@ -278,16 +277,16 @@
             document.getElementById('i-tgl').value = `${y}-${m}-${d}`;
 
             // 3. Acak Jam Kerja (08:00 hingga 20:59) - Tetap 24 Jam
-            let h = Math.floor(Math.random() * 13) + 8; // Rentang 8 hingga 20
-            let min = Math.floor(Math.random() * 60); // Rentang 0 hingga 59
+            let h = Math.floor(Math.random() * 13) + 8; 
+            let min = Math.floor(Math.random() * 60); 
             document.getElementById('i-jam').value = `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
 
             updateStruk();
         }
 
         window.onload = function() {
-            changeSPBU(); // Set otomatis nama & alamat SPBU awal saat halaman dimuat
-            generateReceipt(); // Eksekusi acak data (Nomor, Tanggal, Jam)
+            changeSPBU();
+            generateReceipt(); 
             calculateVolume();
         };
 
@@ -324,7 +323,7 @@
             document.getElementById('r-footer').innerText = document.getElementById('i-footer').value;
         }
 
-        // === FUNGSI BLUETOOTH THERMAL PRINTER (Dengan Chunking) ===
+        // === FUNGSI BLUETOOTH THERMAL PRINTER ===
         let printCharacteristic = null;
 
         async function connectBluetooth() {
@@ -343,93 +342,4 @@
                 for (let service of services) {
                     const characteristics = await service.getCharacteristics();
                     for (let char of characteristics) {
-                        if (char.properties.write || char.properties.writeWithoutResponse) {
-                            printCharacteristic = char;
-                            break;
-                        }
-                    }
-                    if (printCharacteristic) break;
-                }
-
-                if (printCharacteristic) {
-                    document.getElementById('bt-status').innerText = 'Status: Terhubung (' + device.name + ')';
-                    document.getElementById('bt-status').style.color = '#28a745';
-                    document.getElementById('btn-bt-print').style.display = 'block';
-                } else {
-                    throw new Error("Karakteristik Write tidak ditemukan.");
-                }
-
-            } catch (error) {
-                console.error(error);
-                document.getElementById('bt-status').innerText = 'Status: Gagal Terhubung';
-                document.getElementById('bt-status').style.color = '#dc3545';
-                alert('Gagal menghubungkan. Pastikan Bluetooth aktif dan browser mendukung fitur Web Bluetooth.');
-            }
-        }
-
-        function formatLine(leftText, rightText) {
-            let leftStr = String(leftText);
-            let rightStr = String(rightText);
-            let spaces = 32 - (leftStr.length + rightStr.length);
-            if (spaces < 1) spaces = 1;
-            return leftStr + " ".repeat(spaces) + rightStr; 
-        }
-
-        async function printViaBluetooth() {
-            if (!printCharacteristic) {
-                alert('Silakan pindai dan hubungkan printer Bluetooth terlebih dahulu.');
-                return;
-            }
-
-            // ESC/POS Commands Thermal
-            const ESC_NORMAL = "\x1B\x21\x00"; 
-            const BOLD_ON = "\x1B\x45\x01";    
-            const BOLD_OFF = "\x1B\x45\x00";   
-            const SIZE_DOUBLE = "\x1D\x21\x11"; 
-            const SIZE_NORMAL = "\x1D\x21\x00"; 
-            const SIZE_DOUBLE_HEIGHT = "\x1D\x21\x01";
-
-            let receiptText = ESC_NORMAL;
-            receiptText += SIZE_DOUBLE_HEIGHT + document.getElementById('i-nama').value + SIZE_NORMAL + "\n";
-            receiptText += document.getElementById('i-alamat').value + "\n\n";
-            
-            receiptText += formatLine(getFormattedDate(), document.getElementById('i-jam').value) + "\n";
-            
-            receiptText += "Receipt No. :" + document.getElementById('i-receipt').value + "\n\n";
-            
-            receiptText += formatLine("Pump No.", document.getElementById('i-pump').value) + "\n";
-            receiptText += formatLine("Grade", document.getElementById('i-grade').value) + "\n";
-            receiptText += formatLine("Volume", document.getElementById('i-volume').value) + "\n";
-            receiptText += formatLine("Unit Price", document.getElementById('i-price').value) + "\n";
-            
-            let strAmount = formatLine("Amount", document.getElementById('i-amount').value);
-            receiptText += BOLD_ON + strAmount + BOLD_OFF + "\n\n";
-            
-            receiptText += formatLine("Vehicle No.", document.getElementById('i-vehicle').value) + "\n\n";
-            
-            receiptText += document.getElementById('i-footer').value + "\n\n";
-            
-            receiptText += "\n";
-
-            try {
-                const encoder = new TextEncoder();
-                const data = encoder.encode(receiptText);
-                
-                // --- PROSES CHUNKING (MEMECAH DATA) ---
-                const CHUNK_SIZE = 50; // Ukuran aman per pengiriman untuk printer BLE
-                
-                for (let i = 0; i < data.byteLength; i += CHUNK_SIZE) {
-                    let chunk = data.slice(i, i + CHUNK_SIZE);
-                    await printCharacteristic.writeValue(chunk);
-                    await new Promise(resolve => setTimeout(resolve, 50)); 
-                }
-                
-                alert('Data berhasil dikirim ke printer!');
-            } catch (error) {
-                console.error(error);
-                alert('Gagal mencetak. Coba putuskan dan hubungkan ulang printer.');
-            }
-        }
-    </script>
-</body>
-</html>
+                        if (char.properties.write || char.properties.
