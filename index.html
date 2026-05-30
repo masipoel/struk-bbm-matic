@@ -342,4 +342,92 @@
                 for (let service of services) {
                     const characteristics = await service.getCharacteristics();
                     for (let char of characteristics) {
-                        if (char.properties.write || char.properties.
+                        if (char.properties.write || char.properties.writeWithoutResponse) {
+                            printCharacteristic = char;
+                            break;
+                        }
+                    }
+                    if (printCharacteristic) break;
+                }
+
+                if (printCharacteristic) {
+                    document.getElementById('bt-status').innerText = 'Status: Terhubung (' + device.name + ')';
+                    document.getElementById('bt-status').style.color = '#28a745';
+                    document.getElementById('btn-bt-print').style.display = 'block';
+                } else {
+                    throw new Error("Karakteristik Write tidak ditemukan.");
+                }
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('bt-status').innerText = 'Status: Gagal Terhubung';
+                document.getElementById('bt-status').style.color = '#dc3545';
+                alert('Gagal menghubungkan. Pastikan Bluetooth aktif dan browser mendukung fitur Web Bluetooth.');
+            }
+        }
+
+        function formatLine(leftText, rightText) {
+            let leftStr = String(leftText);
+            let rightStr = String(rightText);
+            let spaces = 32 - (leftStr.length + rightStr.length);
+            if (spaces < 1) spaces = 1;
+            return leftStr + " ".repeat(spaces) + rightStr; 
+        }
+
+        async function printViaBluetooth() {
+            if (!printCharacteristic) {
+                alert('Silakan pindai dan hubungkan printer Bluetooth terlebih dahulu.');
+                return;
+            }
+
+            const ESC_NORMAL = "\x1B\x21\x00"; 
+            const BOLD_ON = "\x1B\x45\x01";    
+            const BOLD_OFF = "\x1B\x45\x00";   
+            const SIZE_DOUBLE = "\x1D\x21\x11"; 
+            const SIZE_NORMAL = "\x1D\x21\x00"; 
+            const SIZE_DOUBLE_HEIGHT = "\x1D\x21\x01";
+
+            let receiptText = ESC_NORMAL;
+            receiptText += SIZE_DOUBLE_HEIGHT + document.getElementById('i-nama').value + SIZE_NORMAL + "\n";
+            receiptText += document.getElementById('i-alamat').value + "\n\n";
+            
+            receiptText += formatLine(getFormattedDate(), document.getElementById('i-jam').value) + "\n";
+            
+            receiptText += "Receipt No. :" + document.getElementById('i-receipt').value + "\n\n";
+            
+            receiptText += formatLine("Pump No.", document.getElementById('i-pump').value) + "\n";
+            receiptText += formatLine("Grade", document.getElementById('i-grade').value) + "\n";
+            receiptText += formatLine("Volume", document.getElementById('i-volume').value) + "\n";
+            receiptText += formatLine("Unit Price", document.getElementById('i-price').value) + "\n";
+            
+            let strAmount = formatLine("Amount", document.getElementById('i-amount').value);
+            // DARI SINI: \n\n diubah menjadi \n agar tidak ada spasi kosong ke baris Vehicle No.
+            receiptText += BOLD_ON + strAmount + BOLD_OFF + "\n";
+            
+            receiptText += formatLine("Vehicle No.", document.getElementById('i-vehicle').value) + "\n\n";
+            
+            receiptText += document.getElementById('i-footer').value + "\n\n";
+            
+            receiptText += "\n";
+
+            try {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(receiptText);
+                
+                const CHUNK_SIZE = 50; 
+                
+                for (let i = 0; i < data.byteLength; i += CHUNK_SIZE) {
+                    let chunk = data.slice(i, i + CHUNK_SIZE);
+                    await printCharacteristic.writeValue(chunk);
+                    await new Promise(resolve => setTimeout(resolve, 50)); 
+                }
+                
+                alert('Data berhasil dikirim ke printer!');
+            } catch (error) {
+                console.error(error);
+                alert('Gagal mencetak. Coba putuskan dan hubungkan ulang printer.');
+            }
+        }
+    </script>
+</body>
+</html>
