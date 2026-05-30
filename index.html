@@ -1,435 +1,435 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Cetak Struk SPBU</title>
-    <style>
-        /* --- Font Merchant Copy --- */
-        @font-face {
-            font-family: 'Merchant Copy';
-            /* Pastikan file MerchantCopy.ttf ada di folder yang sama */
-            src: url('MerchantCopy.ttf') format('truetype'); 
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Cetak Struk SPBU</title>
+    <style>
+        /* --- Font Merchant Copy --- */
+        @font-face {
+            font-family: 'Merchant Copy';
+            /* Pastikan file MerchantCopy.ttf ada di folder yang sama */
+            src: url('MerchantCopy.ttf') format('truetype'); 
+        }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
 
-        /* --- Styling untuk Form Input --- */
-        .form-container {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 320px;
-            height: fit-content;
-        }
-        .form-container h3 { margin-top: 0; color: #333; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; color: #555; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
-        .form-group textarea { resize: vertical; }
-        .form-group input[readonly] { background-color: #e9ecef; color: #495057; cursor: not-allowed; }
-        
-        .btn-acak { background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 0 10px; cursor: pointer; font-size: 12px; white-space: nowrap; }
-        .btn-acak:hover { background-color: #5a6268; }
-        
-        .btn-print { width: 100%; padding: 12px; background-color: #6c757d; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .btn-print:hover { background-color: #5a6268; }
+        /* --- Styling untuk Form Input --- */
+        .form-container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 320px;
+            height: fit-content;
+        }
+        .form-container h3 { margin-top: 0; color: #333; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; color: #555; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
+        .form-group textarea { resize: vertical; }
+        .form-group input[readonly] { background-color: #e9ecef; color: #495057; cursor: not-allowed; }
+        
+        .btn-acak { background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 0 10px; cursor: pointer; font-size: 12px; white-space: nowrap; }
+        .btn-acak:hover { background-color: #5a6268; }
+        
+        .btn-print { width: 100%; padding: 12px; background-color: #6c757d; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .btn-print:hover { background-color: #5a6268; }
 
-        .btn-bt-scan { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-        .btn-bt-scan:hover { background-color: #0056b3; }
+        .btn-bt-scan { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .btn-bt-scan:hover { background-color: #0056b3; }
 
-        .btn-bt-print { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 5px; display: none; }
-        .btn-bt-print:hover { background-color: #218838; }
+        .btn-bt-print { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 5px; display: none; }
+        .btn-bt-print:hover { background-color: #218838; }
 
-        .bt-status { font-size: 12px; text-align: center; margin-top: 5px; color: #dc3545; font-weight: bold; }
+        .bt-status { font-size: 12px; text-align: center; margin-top: 5px; color: #dc3545; font-weight: bold; }
 
-        /* --- Styling untuk Kertas Struk (Tampilan Thermal) --- */
-        .receipt-wrapper {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: fit-content;
-        }
-        .receipt-container {
-            width: 320px; 
-            background-color: #fffaf0; 
-            padding: 15px;
-            font-family: 'Merchant Copy', 'Courier New', Courier, monospace;
-            font-size: 22px; 
-            font-weight: 300; 
-            color: #222;
-            line-height: 1.1; 
-            border: 1px solid #ddd;
-        }
-        
-        /* Baris dengan teks di kiri dan kanan */
-        .row { display: flex; justify-content: space-between; }
-        
-        /* Meniru ESC/POS SIZE_DOUBLE_HEIGHT pada Nama SPBU */
-        .double-height {
-            transform: scaleY(1.8); 
-            transform-origin: top left;
-            display: inline-block;
-            margin-bottom: 14px; 
-            font-weight: 300;
-        }
+        /* --- Styling untuk Kertas Struk (Tampilan Thermal) --- */
+        .receipt-wrapper {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: fit-content;
+        }
+        .receipt-container {
+            width: 320px; 
+            background-color: #fffaf0; 
+            padding: 15px;
+            font-family: 'Merchant Copy', 'Courier New', Courier, monospace;
+            font-size: 22px; 
+            font-weight: 300; 
+            color: #222;
+            line-height: 1.1; 
+            border: 1px solid #ddd;
+        }
+        
+        /* Baris dengan teks di kiri dan kanan */
+        .row { display: flex; justify-content: space-between; }
+        
+        /* Meniru ESC/POS SIZE_DOUBLE_HEIGHT pada Nama SPBU */
+        .double-height {
+            transform: scaleY(1.8); 
+            transform-origin: top left;
+            display: inline-block;
+            margin-bottom: 14px; 
+            font-weight: 300;
+        }
 
-        /* Class khusus agar 'Amount' menjadi tebal (Meniru BOLD_ON ESC/POS) */
-        .amount-row strong {
-            font-weight: 900;
-            font-size: 23px;
-        }
+        /* Class khusus agar 'Amount' menjadi tebal (Meniru BOLD_ON ESC/POS) */
+        .amount-row strong {
+            font-weight: 900;
+            font-size: 23px;
+        }
 
-        /* Agar multiline alamat dari textarea tereksekusi line-break-nya di HTML */
-        #r-alamat {
-            white-space: pre-line;
-        }
+        /* Agar multiline alamat dari textarea tereksekusi line-break-nya di HTML */
+        #r-alamat {
+            white-space: pre-line;
+        }
 
-        /* --- Pengaturan Saat Diprint Manual Lewat Browser --- */
-        @media print {
-            body { background: white; margin: 0; padding: 0; display: block; }
-            .form-container, .receipt-wrapper h3 { display: none; }
-            .receipt-wrapper { box-shadow: none; padding: 0; width: 100%; margin: 0; }
-            .receipt-container { 
-                width: 58mm; 
-                margin: 0; 
-                padding: 0; 
-                border: none;
-                background-color: transparent;
-                font-family: 'Merchant Copy', 'Courier New', Courier, monospace;
-                font-size: 20px; 
-                font-weight: 300;
-                line-height: 1.1;
-            }
-        }
-    </style>
+        /* --- Pengaturan Saat Diprint Manual Lewat Browser --- */
+        @media print {
+            body { background: white; margin: 0; padding: 0; display: block; }
+            .form-container, .receipt-wrapper h3 { display: none; }
+            .receipt-wrapper { box-shadow: none; padding: 0; width: 100%; margin: 0; }
+            .receipt-container { 
+                width: 58mm; 
+                margin: 0; 
+                padding: 0; 
+                border: none;
+                background-color: transparent;
+                font-family: 'Merchant Copy', 'Courier New', Courier, monospace;
+                font-size: 20px; 
+                font-weight: 300;
+                line-height: 1.1;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <div class="form-container">
-        <h3>Input Data Struk</h3>
-        
-        <div class="form-group">
-            <label>Nama SPBU</label>
-            <select id="i-nama" onchange="changeSPBU()">
-                <option value="SPBU CODO 83.98302">SPBU CODO 83.98302</option>
-                <option value="SPBU CODO 84.983.01">SPBU CODO 84.983.01</option>
-                <option value="SPBU. 84.983.05">SPBU. 84.983.05</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label>Alamat SPBU</label>
-            <textarea id="i-alamat" rows="3" oninput="updateStruk()"></textarea>
-        </div>
+    <div class="form-container">
+        <h3>Input Data Struk</h3>
+        
+        <div class="form-group">
+            <label>Nama SPBU</label>
+            <select id="i-nama" onchange="changeSPBU()">
+                <option value="SPBU CODO 83.98302">SPBU CODO 83.98302</option>
+                <option value="SPBU CODO 84.983.01">SPBU CODO 84.983.01</option>
+                <option value="SPBU. 84.983.05">SPBU. 84.983.05</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Alamat SPBU</label>
+            <textarea id="i-alamat" rows="3" oninput="updateStruk()"></textarea>
+        </div>
 
-        <div style="display: flex; gap: 10px;">
-            <div class="form-group" style="width: 50%;">
-                <label>Tanggal</label>
-                <input type="date" id="i-tgl" oninput="updateStruk()">
-            </div>
-            <div class="form-group" style="width: 50%;">
-                <label>Jam (24 Jam)</label>
-                <input type="text" id="i-jam" placeholder="HH:MM" maxlength="5" oninput="updateStruk()">
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Receipt No.</label>
-            <div style="display: flex; gap: 5px;">
-                <input type="text" id="i-receipt" oninput="updateStruk()">
-                <button type="button" class="btn-acak" onclick="generateReceipt()">Acak Semua</button>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Pump No.</label>
-            <input type="text" id="i-pump" value="11" oninput="updateStruk()">
-        </div>
-        <div class="form-group">
-            <label>Grade (Jenis BBM)</label>
-            <select id="i-grade" onchange="changeGrade()">
-                <option value="DEXLITE" data-price="13800">DEXLITE</option>
-                <option value="PERTAMAX" data-price="12600">PERTAMAX</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Unit Price (Harga/Liter)</label>
-            <input type="number" id="i-price" value="13800" oninput="calculateVolume()">
-        </div>
-        <div class="form-group">
-            <label>Amount (Total Harga)</label>
-            <input type="number" id="i-amount" value="300000" oninput="calculateVolume()">
-        </div>
-        <div class="form-group">
-            <label>Volume (Liter) - Otomatis</label>
-            <input type="text" id="i-volume" value="21.73" readonly>
-        </div>
-        <div class="form-group">
-            <label>Vehicle No. (Plat Nomor)</label>
-            <input type="text" id="i-vehicle" value="Not Entered" oninput="updateStruk()">
-        </div>
-        <div class="form-group">
-            <label>Teks Footer Pesan</label>
-            <input type="text" id="i-footer" value="TERIMA KASIH DAN SELAMAT JALAN" oninput="updateStruk()">
-        </div>
+        <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="width: 50%;">
+                <label>Tanggal</label>
+                <input type="date" id="i-tgl" oninput="updateStruk()">
+            </div>
+            <div class="form-group" style="width: 50%;">
+                <label>Jam</label>
+                <input type="time" id="i-jam" oninput="updateStruk()">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Receipt No.</label>
+            <div style="display: flex; gap: 5px;">
+                <input type="text" id="i-receipt" oninput="updateStruk()">
+                <button type="button" class="btn-acak" onclick="generateReceipt()">Acak Semua</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Pump No.</label>
+            <input type="text" id="i-pump" value="11" oninput="updateStruk()">
+        </div>
+        <div class="form-group">
+            <label>Grade (Jenis BBM)</label>
+            <select id="i-grade" onchange="changeGrade()">
+                <option value="DEXLITE" data-price="13800">DEXLITE</option>
+                <option value="PERTAMAX" data-price="12600">PERTAMAX</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Unit Price (Harga/Liter)</label>
+            <input type="number" id="i-price" value="13800" oninput="calculateVolume()">
+        </div>
+        <div class="form-group">
+            <label>Amount (Total Harga)</label>
+            <input type="number" id="i-amount" value="300000" oninput="calculateVolume()">
+        </div>
+        <div class="form-group">
+            <label>Volume (Liter) - Otomatis</label>
+            <input type="text" id="i-volume" value="21.73" readonly>
+        </div>
+        <div class="form-group">
+            <label>Vehicle No. (Plat Nomor)</label>
+            <input type="text" id="i-vehicle" value="Not Entered" oninput="updateStruk()">
+        </div>
+        <div class="form-group">
+            <label>Teks Footer Pesan</label>
+            <input type="text" id="i-footer" value="TERIMA KASIH DAN SELAMAT JALAN" oninput="updateStruk()">
+        </div>
 
-        <hr style="margin-top: 20px; border: 0; border-top: 1px solid #ddd;">
-        
-        <button class="btn-bt-scan" onclick="connectBluetooth()">🔍 Pindai Printer Bluetooth</button>
-        <div id="bt-status" class="bt-status">Status: Belum Terhubung</div>
-        <button id="btn-bt-print" class="btn-bt-print" onclick="printViaBluetooth()">🖨️ CETAK VIA BLUETOOTH</button>
-        
-        <button class="btn-print" onclick="window.print()">🖨️ Cetak Manual (Browser)</button>
-    </div>
+        <hr style="margin-top: 20px; border: 0; border-top: 1px solid #ddd;">
+        
+        <button class="btn-bt-scan" onclick="connectBluetooth()">🔍 Pindai Printer Bluetooth</button>
+        <div id="bt-status" class="bt-status">Status: Belum Terhubung</div>
+        <button id="btn-bt-print" class="btn-bt-print" onclick="printViaBluetooth()">🖨️ CETAK VIA BLUETOOTH</button>
+        
+        <button class="btn-print" onclick="window.print()">🖨️ Cetak Manual (Browser)</button>
+    </div>
 
-    <div class="receipt-wrapper">
-        <h3 style="text-align: center; margin-top: 0; color: #555;">Preview Struk</h3>
-        <div class="receipt-container" id="receipt-print">
-            
-            <div id="r-nama" class="double-height"></div>
-            <div id="r-alamat"></div>
-            
-            <br> <div class="row">
-                <span id="r-tgl">19/01/2026</span>
-                <span id="r-jam">20:32</span>
-            </div>
-            
-            <div>Receipt No. :<span id="r-receipt"></span></div>
-            
-            <br> <div class="row">
-                <span>Pump No.</span>
-                <span id="r-pump">11</span>
-            </div>
-            <div class="row">
-                <span>Grade</span>
-                <span id="r-grade">DEXLITE</span>
-            </div>
-            <div class="row">
-                <span>Volume</span>
-                <span id="r-volume">21.73</span>
-            </div>
-            <div class="row">
-                <span>Unit Price</span>
-                <span id="r-price">13800</span>
-            </div>
-            
-            <div class="row amount-row">
-                <strong>Amount</strong>
-                <strong id="r-amount">300000</strong>
-            </div>
-            
-            <br> <div class="row">
-                <span>Vehicle No.</span>
-                <span id="r-vehicle">Not Entered</span>
-            </div>
-            
-            <br> <div id="r-footer">TERIMA KASIH DAN SELAMAT JALAN</div>
-            
-            <br>
-        </div>
-    </div>
+    <div class="receipt-wrapper">
+        <h3 style="text-align: center; margin-top: 0; color: #555;">Preview Struk</h3>
+        <div class="receipt-container" id="receipt-print">
+            
+            <div id="r-nama" class="double-height"></div>
+            <div id="r-alamat"></div>
+            
+            <br> <div class="row">
+                <span id="r-tgl">19/01/2026</span>
+                <span id="r-jam">20:32</span>
+            </div>
+            
+            <div>Receipt No. :<span id="r-receipt"></span></div>
+            
+            <br> <div class="row">
+                <span>Pump No.</span>
+                <span id="r-pump">11</span>
+            </div>
+            <div class="row">
+                <span>Grade</span>
+                <span id="r-grade">DEXLITE</span>
+            </div>
+            <div class="row">
+                <span>Volume</span>
+                <span id="r-volume">21.73</span>
+            </div>
+            <div class="row">
+                <span>Unit Price</span>
+                <span id="r-price">13800</span>
+            </div>
+            
+            <div class="row amount-row">
+                <strong>Amount</strong>
+                <strong id="r-amount">300000</strong>
+            </div>
+            
+            <br> <div class="row">
+                <span>Vehicle No.</span>
+                <span id="r-vehicle">Not Entered</span>
+            </div>
+            
+            <br> <div id="r-footer">TERIMA KASIH DAN SELAMAT JALAN</div>
+            
+            <br>
+        </div>
+    </div>
 
-    <script>
-        // === DATA ALAMAT SPBU OTOMATIS ===
-        const dataSPBU = {
-            "SPBU CODO 83.98302": "JL. TRIKORA SOWI IV MANOKWARI",
-            "SPBU CODO 84.983.01": "Jln. YOS SUDARSO\n\nSANGGENG MANOKWARI",
-            "SPBU. 84.983.05": "Jln. Poros Manokwari-Sorong\n\nSP 4 Prafi\nMANUKWARI"
-        };
+    <script>
+        // === DATA ALAMAT SPBU OTOMATIS ===
+        const dataSPBU = {
+            "SPBU CODO 83.98302": "JL. TRIKORA SOWI IV MANOKWARI",
+            "SPBU CODO 84.983.01": "Jln. YOS SUDARSO\n\nSANGGENG MANOKWARI",
+            "SPBU. 84.983.05": "Jln. Poros Manokwari-Sorong\n\nSP 4 Prafi\nMANUKWARI"
+        };
 
-        // === FUNGSI LOGIKA FORM ===
-        function changeSPBU() {
-            let namaSPBU = document.getElementById('i-nama').value;
-            // Set textarea alamat berdasarkan dropdown pilihan
-            document.getElementById('i-alamat').value = dataSPBU[namaSPBU] || "";
-            updateStruk();
-        }
+        // === FUNGSI LOGIKA FORM ===
+        function changeSPBU() {
+            let namaSPBU = document.getElementById('i-nama').value;
+            // Set textarea alamat berdasarkan dropdown pilihan
+            document.getElementById('i-alamat').value = dataSPBU[namaSPBU] || "";
+            updateStruk();
+        }
 
-        function changeGrade() {
-            let gradeSelect = document.getElementById('i-grade');
-            let selectedOption = gradeSelect.options[gradeSelect.selectedIndex];
-            document.getElementById('i-price').value = selectedOption.getAttribute('data-price');
-            calculateVolume(); 
-        }
+        function changeGrade() {
+            let gradeSelect = document.getElementById('i-grade');
+            let selectedOption = gradeSelect.options[gradeSelect.selectedIndex];
+            document.getElementById('i-price').value = selectedOption.getAttribute('data-price');
+            calculateVolume(); 
+        }
 
-        function generateReceipt() {
-            // 1. Acak Receipt No.
-            let randomNum = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
-            document.getElementById('i-receipt').value = '0' + randomNum;
+        function generateReceipt() {
+            // 1. Acak Receipt No.
+            let randomNum = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+            document.getElementById('i-receipt').value = '0' + randomNum;
 
-            // 2. Acak Tanggal (Dari 1 Januari tahun ini hingga hari ini)
-            let end = new Date(); // Hari ini
-            let start = new Date(end.getFullYear(), 0, 1); // 1 Januari tahun berjalan
-            let randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-            
-            let d = String(randomDate.getDate()).padStart(2, '0');
-            let m = String(randomDate.getMonth() + 1).padStart(2, '0');
-            let y = randomDate.getFullYear();
-            document.getElementById('i-tgl').value = `${y}-${m}-${d}`;
+            // 2. Acak Tanggal (Dari 1 Januari tahun ini hingga hari ini)
+            let end = new Date(); // Hari ini
+            let start = new Date(end.getFullYear(), 0, 1); // 1 Januari tahun berjalan
+            let randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+            
+            let d = String(randomDate.getDate()).padStart(2, '0');
+            let m = String(randomDate.getMonth() + 1).padStart(2, '0');
+            let y = randomDate.getFullYear();
+            document.getElementById('i-tgl').value = `${y}-${m}-${d}`;
 
-            // 3. Acak Jam Kerja (08:00 hingga 20:59) - Tetap 24 Jam
-            let h = Math.floor(Math.random() * 13) + 8; // Rentang 8 hingga 20
-            let min = Math.floor(Math.random() * 60); // Rentang 0 hingga 59
-            document.getElementById('i-jam').value = `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+            // 3. Acak Jam Kerja (08:00 hingga 20:59)
+            let h = Math.floor(Math.random() * 13) + 8; // Menghasilkan rentang angka 8 hingga 20
+            let min = Math.floor(Math.random() * 60); // Menghasilkan rentang angka 0 hingga 59
+            document.getElementById('i-jam').value = `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
 
-            updateStruk();
-        }
+            updateStruk();
+        }
 
-        window.onload = function() {
-            changeSPBU(); // Set otomatis nama & alamat SPBU awal saat halaman dimuat
-            generateReceipt(); // Eksekusi acak data (Nomor, Tanggal, Jam)
-            calculateVolume();
-        };
+        window.onload = function() {
+            changeSPBU(); // Set otomatis nama & alamat SPBU awal saat halaman dimuat
+            generateReceipt(); // Eksekusi acak data (Nomor, Tanggal, Jam)
+            calculateVolume();
+        };
 
-        function calculateVolume() {
-            let price = parseFloat(document.getElementById('i-price').value) || 0;
-            let amount = parseFloat(document.getElementById('i-amount').value) || 0;
-            let volume = 0;
-            if (price > 0) {
-                volume = Math.floor((amount / price) * 100) / 100;
-            }
-            document.getElementById('i-volume').value = volume > 0 ? volume : 0;
-            updateStruk();
-        }
+        function calculateVolume() {
+            let price = parseFloat(document.getElementById('i-price').value) || 0;
+            let amount = parseFloat(document.getElementById('i-amount').value) || 0;
+            let volume = 0;
+            if (price > 0) {
+                volume = Math.floor((amount / price) * 100) / 100;
+            }
+            document.getElementById('i-volume').value = volume > 0 ? volume : 0;
+            updateStruk();
+        }
 
-        function getFormattedDate() {
-            let rawDate = document.getElementById('i-tgl').value;
-            if(!rawDate) return "";
-            let parts = rawDate.split("-");
-            return parts.length === 3 ? parts[2] + "/" + parts[1] + "/" + parts[0] : rawDate;
-        }
+        function getFormattedDate() {
+            let rawDate = document.getElementById('i-tgl').value;
+            if(!rawDate) return "";
+            let parts = rawDate.split("-");
+            return parts.length === 3 ? parts[2] + "/" + parts[1] + "/" + parts[0] : rawDate;
+        }
 
-        function updateStruk() {
-            document.getElementById('r-nama').innerText = document.getElementById('i-nama').value;
-            document.getElementById('r-alamat').innerText = document.getElementById('i-alamat').value;
-            document.getElementById('r-tgl').innerText = getFormattedDate();
-            document.getElementById('r-jam').innerText = document.getElementById('i-jam').value;
-            document.getElementById('r-receipt').innerText = document.getElementById('i-receipt').value;
-            document.getElementById('r-pump').innerText = document.getElementById('i-pump').value;
-            document.getElementById('r-grade').innerText = document.getElementById('i-grade').value;
-            document.getElementById('r-volume').innerText = document.getElementById('i-volume').value;
-            document.getElementById('r-price').innerText = document.getElementById('i-price').value;
-            document.getElementById('r-amount').innerText = document.getElementById('i-amount').value;
-            document.getElementById('r-vehicle').innerText = document.getElementById('i-vehicle').value;
-            document.getElementById('r-footer').innerText = document.getElementById('i-footer').value;
-        }
+        function updateStruk() {
+            document.getElementById('r-nama').innerText = document.getElementById('i-nama').value;
+            document.getElementById('r-alamat').innerText = document.getElementById('i-alamat').value;
+            document.getElementById('r-tgl').innerText = getFormattedDate();
+            document.getElementById('r-jam').innerText = document.getElementById('i-jam').value;
+            document.getElementById('r-receipt').innerText = document.getElementById('i-receipt').value;
+            document.getElementById('r-pump').innerText = document.getElementById('i-pump').value;
+            document.getElementById('r-grade').innerText = document.getElementById('i-grade').value;
+            document.getElementById('r-volume').innerText = document.getElementById('i-volume').value;
+            document.getElementById('r-price').innerText = document.getElementById('i-price').value;
+            document.getElementById('r-amount').innerText = document.getElementById('i-amount').value;
+            document.getElementById('r-vehicle').innerText = document.getElementById('i-vehicle').value;
+            document.getElementById('r-footer').innerText = document.getElementById('i-footer').value;
+        }
 
-        // === FUNGSI BLUETOOTH THERMAL PRINTER (Dengan Chunking) ===
-        let printCharacteristic = null;
+        // === FUNGSI BLUETOOTH THERMAL PRINTER (Dengan Chunking) ===
+        let printCharacteristic = null;
 
-        async function connectBluetooth() {
-            try {
-                const device = await navigator.bluetooth.requestDevice({
-                    acceptAllDevices: true,
-                    optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', 'e7810a71-73ae-499d-8c15-faa9aef0c3f2', '49535343-fe7d-4ae5-8fa9-9fafd205e455']
-                });
+        async function connectBluetooth() {
+            try {
+                const device = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true,
+                    optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', 'e7810a71-73ae-499d-8c15-faa9aef0c3f2', '49535343-fe7d-4ae5-8fa9-9fafd205e455']
+                });
 
-                document.getElementById('bt-status').innerText = 'Status: Menghubungkan...';
-                document.getElementById('bt-status').style.color = '#ffc107';
+                document.getElementById('bt-status').innerText = 'Status: Menghubungkan...';
+                document.getElementById('bt-status').style.color = '#ffc107';
 
-                const server = await device.gatt.connect();
-                const services = await server.getPrimaryServices();
+                const server = await device.gatt.connect();
+                const services = await server.getPrimaryServices();
 
-                for (let service of services) {
-                    const characteristics = await service.getCharacteristics();
-                    for (let char of characteristics) {
-                        if (char.properties.write || char.properties.writeWithoutResponse) {
-                            printCharacteristic = char;
-                            break;
-                        }
-                    }
-                    if (printCharacteristic) break;
-                }
+                for (let service of services) {
+                    const characteristics = await service.getCharacteristics();
+                    for (let char of characteristics) {
+                        if (char.properties.write || char.properties.writeWithoutResponse) {
+                            printCharacteristic = char;
+                            break;
+                        }
+                    }
+                    if (printCharacteristic) break;
+                }
 
-                if (printCharacteristic) {
-                    document.getElementById('bt-status').innerText = 'Status: Terhubung (' + device.name + ')';
-                    document.getElementById('bt-status').style.color = '#28a745';
-                    document.getElementById('btn-bt-print').style.display = 'block';
-                } else {
-                    throw new Error("Karakteristik Write tidak ditemukan.");
-                }
+                if (printCharacteristic) {
+                    document.getElementById('bt-status').innerText = 'Status: Terhubung (' + device.name + ')';
+                    document.getElementById('bt-status').style.color = '#28a745';
+                    document.getElementById('btn-bt-print').style.display = 'block';
+                } else {
+                    throw new Error("Karakteristik Write tidak ditemukan.");
+                }
 
-            } catch (error) {
-                console.error(error);
-                document.getElementById('bt-status').innerText = 'Status: Gagal Terhubung';
-                document.getElementById('bt-status').style.color = '#dc3545';
-                alert('Gagal menghubungkan. Pastikan Bluetooth aktif dan browser mendukung fitur Web Bluetooth.');
-            }
-        }
+            } catch (error) {
+                console.error(error);
+                document.getElementById('bt-status').innerText = 'Status: Gagal Terhubung';
+                document.getElementById('bt-status').style.color = '#dc3545';
+                alert('Gagal menghubungkan. Pastikan Bluetooth aktif dan browser mendukung fitur Web Bluetooth.');
+            }
+        }
 
-        function formatLine(leftText, rightText) {
-            let leftStr = String(leftText);
-            let rightStr = String(rightText);
-            let spaces = 32 - (leftStr.length + rightStr.length);
-            if (spaces < 1) spaces = 1;
-            return leftStr + " ".repeat(spaces) + rightStr; 
-        }
+        function formatLine(leftText, rightText) {
+            let leftStr = String(leftText);
+            let rightStr = String(rightText);
+            let spaces = 32 - (leftStr.length + rightStr.length);
+            if (spaces < 1) spaces = 1;
+            return leftStr + " ".repeat(spaces) + rightStr; 
+        }
 
-        async function printViaBluetooth() {
-            if (!printCharacteristic) {
-                alert('Silakan pindai dan hubungkan printer Bluetooth terlebih dahulu.');
-                return;
-            }
+        async function printViaBluetooth() {
+            if (!printCharacteristic) {
+                alert('Silakan pindai dan hubungkan printer Bluetooth terlebih dahulu.');
+                return;
+            }
 
-            // ESC/POS Commands Thermal
-            const ESC_NORMAL = "\x1B\x21\x00"; 
-            const BOLD_ON = "\x1B\x45\x01";    
-            const BOLD_OFF = "\x1B\x45\x00";   
-            const SIZE_DOUBLE = "\x1D\x21\x11"; 
-            const SIZE_NORMAL = "\x1D\x21\x00"; 
-            const SIZE_DOUBLE_HEIGHT = "\x1D\x21\x01";
+            // ESC/POS Commands Thermal
+            const ESC_NORMAL = "\x1B\x21\x00"; 
+            const BOLD_ON = "\x1B\x45\x01";    
+            const BOLD_OFF = "\x1B\x45\x00";   
+            const SIZE_DOUBLE = "\x1D\x21\x11"; 
+            const SIZE_NORMAL = "\x1D\x21\x00"; 
+            const SIZE_DOUBLE_HEIGHT = "\x1D\x21\x01";
 
-            let receiptText = ESC_NORMAL;
-            receiptText += SIZE_DOUBLE_HEIGHT + document.getElementById('i-nama').value + SIZE_NORMAL + "\n";
-            receiptText += document.getElementById('i-alamat').value + "\n\n";
-            
-            receiptText += formatLine(getFormattedDate(), document.getElementById('i-jam').value) + "\n";
-            
-            receiptText += "Receipt No. :" + document.getElementById('i-receipt').value + "\n\n";
-            
-            receiptText += formatLine("Pump No.", document.getElementById('i-pump').value) + "\n";
-            receiptText += formatLine("Grade", document.getElementById('i-grade').value) + "\n";
-            receiptText += formatLine("Volume", document.getElementById('i-volume').value) + "\n";
-            receiptText += formatLine("Unit Price", document.getElementById('i-price').value) + "\n";
-            
-            let strAmount = formatLine("Amount", document.getElementById('i-amount').value);
-            receiptText += BOLD_ON + strAmount + BOLD_OFF + "\n\n";
-            
-            receiptText += formatLine("Vehicle No.", document.getElementById('i-vehicle').value) + "\n";
-            
-            receiptText += document.getElementById('i-footer').value + "\n\n";
-            
-            receiptText += "\n";
+            let receiptText = ESC_NORMAL;
+            receiptText += SIZE_DOUBLE_HEIGHT + document.getElementById('i-nama').value + SIZE_NORMAL + "\n";
+            receiptText += document.getElementById('i-alamat').value + "\n\n";
+            
+            receiptText += formatLine(getFormattedDate(), document.getElementById('i-jam').value) + "\n";
+            
+            receiptText += "Receipt No. :" + document.getElementById('i-receipt').value + "\n\n";
+            
+            receiptText += formatLine("Pump No.", document.getElementById('i-pump').value) + "\n";
+            receiptText += formatLine("Grade", document.getElementById('i-grade').value) + "\n";
+            receiptText += formatLine("Volume", document.getElementById('i-volume').value) + "\n";
+            receiptText += formatLine("Unit Price", document.getElementById('i-price').value) + "\n";
+            
+            let strAmount = formatLine("Amount", document.getElementById('i-amount').value);
+            receiptText += BOLD_ON + strAmount + BOLD_OFF + "\n";
+            
+            receiptText += formatLine("Vehicle No.", document.getElementById('i-vehicle').value) + "\n\n";
+            
+            receiptText += document.getElementById('i-footer').value + "\n\n";
+            
+            receiptText += "\n";
 
-            try {
-                const encoder = new TextEncoder();
-                const data = encoder.encode(receiptText);
-                
-                // --- PROSES CHUNKING (MEMECAH DATA) ---
-                const CHUNK_SIZE = 50; // Ukuran aman per pengiriman untuk printer BLE
-                
-                for (let i = 0; i < data.byteLength; i += CHUNK_SIZE) {
-                    let chunk = data.slice(i, i + CHUNK_SIZE);
-                    await printCharacteristic.writeValue(chunk);
-                    await new Promise(resolve => setTimeout(resolve, 50)); 
-                }
-                
-                alert('Data berhasil dikirim ke printer!');
-            } catch (error) {
-                console.error(error);
-                alert('Gagal mencetak. Coba putuskan dan hubungkan ulang printer.');
-            }
-        }
-    </script>
+            try {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(receiptText);
+                
+                // --- PROSES CHUNKING (MEMECAH DATA) ---
+                const CHUNK_SIZE = 50; // Ukuran aman per pengiriman untuk printer BLE
+                
+                for (let i = 0; i < data.byteLength; i += CHUNK_SIZE) {
+                    let chunk = data.slice(i, i + CHUNK_SIZE);
+                    await printCharacteristic.writeValue(chunk);
+                    await new Promise(resolve => setTimeout(resolve, 50)); 
+                }
+                
+                alert('Data berhasil dikirim ke printer!');
+            } catch (error) {
+                console.error(error);
+                alert('Gagal mencetak. Coba putuskan dan hubungkan ulang printer.');
+            }
+        }
+    </script>
 </body>
 </html>
