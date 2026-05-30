@@ -420,6 +420,19 @@
                 return;
             }
 
+            // 1. Ambil daftar Nama SPBU dari kunci (keys) variabel dataSPBU
+            const spbuKeys = Object.keys(dataSPBU);
+            
+            // 2. Pilih salah satu Nama SPBU secara acak
+            const randomSPBU = spbuKeys[Math.floor(Math.random() * spbuKeys.length)];
+            
+            // 3. Ubah nilai select Nama SPBU dan perbarui alamatnya
+            document.getElementById('i-nama').value = randomSPBU;
+            changeSPBU(); // Fungsi ini otomatis memperbarui alamat berdasarkan SPBU terpilih
+            
+            // 4. Acak seluruh data transaksi lainnya (Nomor Struk, Tanggal, Jam, Amount, dll)
+            generateReceipt(); // Fungsi ini otomatis menghitung ulang volume dan mengupdate tampilan
+
             // ESC/POS Commands Thermal
             const ESC_NORMAL = "\x1B\x21\x00"; 
             const BOLD_ON = "\x1B\x45\x01";    
@@ -455,7 +468,7 @@
                 const data = encoder.encode(receiptText);
                 
                 await printCharacteristic.writeValue(data);
-                alert('Data berhasil dikirim ke printer!');
+                alert('Data berhasil diacak dan dikirim ke printer!');
             } catch (error) {
                 console.error(error);
                 alert('Gagal mencetak. Coba putuskan dan hubungkan ulang printer.');
