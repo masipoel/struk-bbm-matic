@@ -140,8 +140,8 @@
                 <input type="date" id="i-tgl" oninput="updateStruk()">
             </div>
             <div class="form-group" style="width: 50%;">
-                <label>Jam</label>
-                <input type="time" id="i-jam" oninput="updateStruk()">
+                <label>Jam (24 Jam)</label>
+                <input type="text" id="i-jam" placeholder="HH:MM" maxlength="5" oninput="updateStruk()">
             </div>
         </div>
         <div class="form-group">
@@ -277,9 +277,9 @@
             let y = randomDate.getFullYear();
             document.getElementById('i-tgl').value = `${y}-${m}-${d}`;
 
-            // 3. Acak Jam Kerja (08:00 hingga 20:59)
-            let h = Math.floor(Math.random() * 13) + 8; // Menghasilkan rentang angka 8 hingga 20
-            let min = Math.floor(Math.random() * 60); // Menghasilkan rentang angka 0 hingga 59
+            // 3. Acak Jam Kerja (08:00 hingga 20:59) - Tetap 24 Jam
+            let h = Math.floor(Math.random() * 13) + 8; // Rentang 8 hingga 20
+            let min = Math.floor(Math.random() * 60); // Rentang 0 hingga 59
             document.getElementById('i-jam').value = `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
 
             updateStruk();
