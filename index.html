@@ -137,11 +137,11 @@
         <div style="display: flex; gap: 10px;">
             <div class="form-group" style="width: 50%;">
                 <label>Tanggal</label>
-                <input type="date" id="i-tgl" value="2026-01-19" oninput="updateStruk()">
+                <input type="date" id="i-tgl" oninput="updateStruk()">
             </div>
             <div class="form-group" style="width: 50%;">
                 <label>Jam</label>
-                <input type="time" id="i-jam" value="20:32" oninput="updateStruk()">
+                <input type="time" id="i-jam" oninput="updateStruk()">
             </div>
         </div>
         <div class="form-group">
@@ -250,7 +250,6 @@
         // === FUNGSI LOGIKA FORM ===
         function changeSPBU() {
             let namaSPBU = document.getElementById('i-nama').value;
-            // Set textarea alamat berdasarkan dropdown pilihan
             document.getElementById('i-alamat').value = dataSPBU[namaSPBU] || "";
             updateStruk();
         }
@@ -263,14 +262,34 @@
         }
 
         function generateReceipt() {
+            // Acak Receipt No
             let randomNum = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
             document.getElementById('i-receipt').value = '0' + randomNum;
+
+            // Acak Tanggal (Rentang: 1 Januari 2026 hingga hari ini)
+            let today = new Date();
+            let pastDate = new Date("2026-01-01T00:00:00"); 
+            let randomTime = pastDate.getTime() + Math.random() * (today.getTime() - pastDate.getTime());
+            let randomDate = new Date(randomTime);
+            
+            let yyyy = randomDate.getFullYear();
+            let mm = String(randomDate.getMonth() + 1).padStart(2, '0');
+            let dd = String(randomDate.getDate()).padStart(2, '0');
+            document.getElementById('i-tgl').value = `${yyyy}-${mm}-${dd}`;
+
+            // Acak Jam (Rentang: 08:00 hingga 20:59 agar tidak melebihi 21:00)
+            let randomHour = Math.floor(Math.random() * 13) + 8; // 8 sampai 20
+            let randomMinute = Math.floor(Math.random() * 60);   // 0 sampai 59
+            let hh = String(randomHour).padStart(2, '0');
+            let min = String(randomMinute).padStart(2, '0');
+            document.getElementById('i-jam').value = `${hh}:${min}`;
+
             updateStruk();
         }
 
         window.onload = function() {
-            changeSPBU(); // Set otomatis nama & alamat SPBU awal saat halaman dimuat
-            generateReceipt();
+            changeSPBU(); 
+            generateReceipt(); // Memanggil fungsi acak tanggal, waktu, & receipt saat halaman dimuat
             calculateVolume();
         };
 
@@ -306,7 +325,6 @@
             document.getElementById('r-vehicle').innerText = document.getElementById('i-vehicle').value;
             document.getElementById('r-footer').innerText = document.getElementById('i-footer').value;
         }
-
 
         // === FUNGSI BLUETOOTH THERMAL PRINTER ===
         let printCharacteristic = null;
