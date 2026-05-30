@@ -456,11 +456,6 @@
                 
                 await printCharacteristic.writeValue(data);
                 alert('Data berhasil dikirim ke printer!');
-                
-                // --- BAGIAN YANG DITAMBAHKAN ---
-                // Men-generate ulang data struk (acak semua otomatis) setelah cetak berhasil
-                generateReceipt();
-                
             } catch (error) {
                 console.error(error);
                 alert('Gagal mencetak. Coba putuskan dan hubungkan ulang printer.');
