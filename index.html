@@ -137,7 +137,7 @@
         <div style="display: flex; gap: 10px;">
             <div class="form-group" style="width: 50%;">
                 <label>Tanggal</label>
-                <input type="date" id="i-tgl" oninput="updateStruk()">
+                <input type="date" id="i-tgl" oninput="adjustPriceByDate()">
             </div>
             <div class="form-group" style="width: 50%;">
                 <label>Jam</label>
@@ -157,7 +157,7 @@
         </div>
         <div class="form-group">
             <label>Grade (Jenis BBM)</label>
-            <select id="i-grade" onchange="changeGrade()">
+            <select id="i-grade" onchange="adjustPriceByDate()">
                 <option value="DEXLITE" data-price="13800">DEXLITE</option>
                 <option value="PERTAMAX" data-price="12600">PERTAMAX</option>
             </select>
@@ -254,10 +254,39 @@
             updateStruk();
         }
 
-        function changeGrade() {
+        // Fungsi Penyesuaian Harga berdasarkan Tanggal
+        function adjustPriceByDate() {
             let gradeSelect = document.getElementById('i-grade');
             let selectedOption = gradeSelect.options[gradeSelect.selectedIndex];
-            document.getElementById('i-price').value = selectedOption.getAttribute('data-price');
+            let gradeName = selectedOption.value;
+            
+            if (gradeName === 'DEXLITE') {
+                let dateStr = document.getElementById('i-tgl').value;
+                let price = 13800; // Harga default (Jan - Feb)
+                
+                if (dateStr) {
+                    let selectedDate = new Date(dateStr);
+                    let selectedTime = selectedDate.getTime();
+                    
+                    // Batas waktu untuk perubahan harga
+                    let mar1 = new Date("2026-03-01T00:00:00").getTime();
+                    let may7 = new Date("2026-05-07T00:00:00").getTime();
+                    
+                    if (selectedTime >= may7) {
+                        price = 26600; // 7 Mei ke atas
+                    } else if (selectedTime >= mar1) {
+                        price = 14500; // 1 Maret - 6 Mei
+                    } else {
+                        price = 13800; // Jan - Feb
+                    }
+                }
+                document.getElementById('i-price').value = price;
+            } else {
+                // Untuk selain DEXLITE (misal PERTAMAX), gunakan harga default dari data-price
+                document.getElementById('i-price').value = selectedOption.getAttribute('data-price');
+            }
+            
+            // Lakukan kalkulasi volume & update tampilan struk
             calculateVolume(); 
         }
 
@@ -287,14 +316,18 @@
             // Acak Pump No (1 hingga 11)
             let randomPump = Math.floor(Math.random() * 11) + 1;
             document.getElementById('i-pump').value = randomPump;
+            
+            // Acak Amount (300.000 hingga 1.100.000, kelipatan 1000)
+            let randomAmount = Math.floor(Math.random() * 801) * 1000 + 300000;
+            document.getElementById('i-amount').value = randomAmount;
 
-            updateStruk();
+            // Set harga dan update struk
+            adjustPriceByDate();
         }
 
         window.onload = function() {
             changeSPBU(); 
-            generateReceipt(); // Memanggil fungsi acak tanggal, waktu, pump & receipt saat halaman dimuat
-            calculateVolume();
+            generateReceipt(); // Memanggil fungsi acak semua data (termasuk penyesuaian harga Dexlite & amount)
         };
 
         function calculateVolume() {
