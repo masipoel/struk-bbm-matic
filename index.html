@@ -228,7 +228,7 @@
                 <strong id="r-amount">300000</strong>
             </div>
             
-            <br> <div class="row">
+            <div class="row">
                 <span>Vehicle No.</span>
                 <span id="r-vehicle">Not Entered</span>
             </div>
@@ -403,7 +403,7 @@
             receiptText += formatLine("Unit Price", document.getElementById('i-price').value) + "\n";
             
             let strAmount = formatLine("Amount", document.getElementById('i-amount').value);
-            receiptText += BOLD_ON + strAmount + BOLD_OFF + "\n\n";
+            receiptText += BOLD_ON + strAmount + BOLD_OFF + "\n";
             
             receiptText += formatLine("Vehicle No.", document.getElementById('i-vehicle').value) + "\n\n";
             
