@@ -8,6 +8,7 @@
         /* --- Font Merchant Copy --- */
         @font-face {
             font-family: 'Merchant Copy';
+            /* Pastikan file MerchantCopy.ttf ada di folder yang sama */
             src: url('MerchantCopy.ttf') format('truetype'); 
         }
 
@@ -38,7 +39,7 @@
         .form-group textarea { resize: vertical; }
         .form-group input[readonly] { background-color: #e9ecef; color: #495057; cursor: not-allowed; }
         
-        .btn-acak { background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 0 10px; cursor: pointer; font-size: 12px; white-space: nowrap; }
+        .btn-acak { background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 0 10px; cursor: pointer; font-size: 12px; }
         .btn-acak:hover { background-color: #5a6268; }
         
         .btn-print { width: 100%; padding: 12px; background-color: #6c757d; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 5px; }
@@ -136,18 +137,18 @@
         <div style="display: flex; gap: 10px;">
             <div class="form-group" style="width: 50%;">
                 <label>Tanggal</label>
-                <input type="date" id="i-tgl" oninput="updateStruk()">
+                <input type="date" id="i-tgl" value="" oninput="updateStruk()">
             </div>
             <div class="form-group" style="width: 50%;">
-                <label>Jam (24 Jam)</label>
-                <input type="text" id="i-jam" placeholder="HH:MM" maxlength="5" oninput="updateStruk()">
+                <label>Jam</label>
+                <input type="time" id="i-jam" value="" oninput="updateStruk()">
             </div>
         </div>
         <div class="form-group">
             <label>Receipt No.</label>
             <div style="display: flex; gap: 5px;">
                 <input type="text" id="i-receipt" oninput="updateStruk()">
-                <button type="button" class="btn-acak" onclick="generateReceipt()">Acak Semua</button>
+                <button type="button" class="btn-acak" onclick="generateReceipt()">Acak</button>
             </div>
         </div>
         <div class="form-group">
@@ -199,13 +200,13 @@
             <div id="r-alamat"></div>
             
             <br> <div class="row">
-                <span id="r-tgl">19/01/2026</span>
-                <span id="r-jam">20:32</span>
+                <span id="r-tgl"></span>
+                <span id="r-jam"></span>
             </div>
             
             <div>Receipt No. :<span id="r-receipt"></span></div>
             
-            <div class="row">
+            <br> <div class="row">
                 <span>Pump No.</span>
                 <span id="r-pump">11</span>
             </div>
@@ -227,7 +228,7 @@
                 <strong id="r-amount">300000</strong>
             </div>
             
-            <div class="row">
+            <br> <div class="row">
                 <span>Vehicle No.</span>
                 <span id="r-vehicle">Not Entered</span>
             </div>
@@ -247,8 +248,24 @@
         };
 
         // === FUNGSI LOGIKA FORM ===
+        function generateRandomDateTime() {
+            // Acak Tanggal
+            const year = new Date().getFullYear();
+            const month = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
+            const day = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0'); // Menggunakan 1-28 agar aman untuk semua bulan
+            document.getElementById('i-tgl').value = `${year}-${month}-${day}`;
+
+            // Acak Waktu (08:00 hingga 20:59, karena operasional hingga 21:00) format 24 Jam
+            const hour = Math.floor(Math.random() * 13) + 8; // Menghasilkan angka acak antara 8 hingga 20
+            const minute = Math.floor(Math.random() * 60);   // Menghasilkan angka acak antara 0 hingga 59
+            const hourStr = String(hour).padStart(2, '0');
+            const minStr = String(minute).padStart(2, '0');
+            document.getElementById('i-jam').value = `${hourStr}:${minStr}`;
+        }
+
         function changeSPBU() {
             let namaSPBU = document.getElementById('i-nama').value;
+            // Set textarea alamat berdasarkan dropdown pilihan
             document.getElementById('i-alamat').value = dataSPBU[namaSPBU] || "";
             updateStruk();
         }
@@ -263,26 +280,13 @@
         function generateReceipt() {
             let randomNum = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
             document.getElementById('i-receipt').value = '0' + randomNum;
-
-            let end = new Date(); 
-            let start = new Date(end.getFullYear(), 0, 1); 
-            let randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-            
-            let d = String(randomDate.getDate()).padStart(2, '0');
-            let m = String(randomDate.getMonth() + 1).padStart(2, '0');
-            let y = randomDate.getFullYear();
-            document.getElementById('i-tgl').value = `${y}-${m}-${d}`;
-
-            let h = Math.floor(Math.random() * 13) + 8; 
-            let min = Math.floor(Math.random() * 60); 
-            document.getElementById('i-jam').value = `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
-
             updateStruk();
         }
 
         window.onload = function() {
-            changeSPBU();
-            generateReceipt(); 
+            generateRandomDateTime(); // Set otomatis tanggal & waktu acak (jam kerja) saat halaman dimuat
+            changeSPBU(); // Set otomatis nama & alamat SPBU awal saat halaman dimuat
+            generateReceipt();
             calculateVolume();
         };
 
@@ -376,6 +380,7 @@
                 return;
             }
 
+            // ESC/POS Commands Thermal
             const ESC_NORMAL = "\x1B\x21\x00"; 
             const BOLD_ON = "\x1B\x45\x01";    
             const BOLD_OFF = "\x1B\x45\x00";   
@@ -389,8 +394,7 @@
             
             receiptText += formatLine(getFormattedDate(), document.getElementById('i-jam').value) + "\n";
             
-            // DARI SINI: \n\n diubah menjadi \n agar rapat dengan bagian Pump, Grade, Volume
-            receiptText += "Receipt No. :" + document.getElementById('i-receipt').value + "\n";
+            receiptText += "Receipt No. :" + document.getElementById('i-receipt').value + "\n\n";
             
             receiptText += formatLine("Pump No.", document.getElementById('i-pump').value) + "\n";
             receiptText += formatLine("Grade", document.getElementById('i-grade').value) + "\n";
@@ -398,7 +402,7 @@
             receiptText += formatLine("Unit Price", document.getElementById('i-price').value) + "\n";
             
             let strAmount = formatLine("Amount", document.getElementById('i-amount').value);
-            receiptText += BOLD_ON + strAmount + BOLD_OFF + "\n";
+            receiptText += BOLD_ON + strAmount + BOLD_OFF + "\n\n";
             
             receiptText += formatLine("Vehicle No.", document.getElementById('i-vehicle').value) + "\n\n";
             
@@ -410,11 +414,17 @@
                 const encoder = new TextEncoder();
                 const data = encoder.encode(receiptText);
                 
-                const CHUNK_SIZE = 50; 
+                // --- PROSES CHUNKING (MEMECAH DATA) ---
+                const CHUNK_SIZE = 50; // Ukuran aman per pengiriman untuk printer BLE
                 
                 for (let i = 0; i < data.byteLength; i += CHUNK_SIZE) {
+                    // Ambil potongan data
                     let chunk = data.slice(i, i + CHUNK_SIZE);
+                    
+                    // Kirim potongan tersebut ke printer
                     await printCharacteristic.writeValue(chunk);
+                    
+                    // Jeda waktu (50 milidetik) agar buffer printer tidak kelebihan beban
                     await new Promise(resolve => setTimeout(resolve, 50)); 
                 }
                 
